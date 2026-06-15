@@ -31,3 +31,27 @@ body {
 input, button {
   font-family: inherit;
 }
+
+@keyframes heartbeat-inner {
+  0%, 100% { transform: scale(1); }
+  14%       { transform: scale(1.15); }
+  28%       { transform: scale(1); }
+  42%       { transform: scale(1.08); }
+  56%       { transform: scale(1); }
+}
+
+@keyframes heartbeat-mid {
+  0%, 100% { transform: scale(1); }
+  14%       { transform: scale(1.1); }
+  28%       { transform: scale(1); }
+  42%       { transform: scale(1.05); }
+  56%       { transform: scale(1); }
+}
+
+@keyframes heartbeat-outer {
+  0%, 100% { transform: scale(1); }
+  14%       { transform: scale(1.07); }
+  28%       { transform: scale(1); }
+  42%       { transform: scale(1.03); }
+  56%       { transform: scale(1); }
+}
