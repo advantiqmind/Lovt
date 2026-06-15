@@ -5,11 +5,13 @@ export default function Landing() {
   const navigate = useNavigate()
   const [visible, setVisible] = useState(false)
   const [pulse, setPulse] = useState(false)
+  const [beat, setBeat] = useState(false)
 
   useEffect(() => {
     const t1 = setTimeout(() => setVisible(true), 100)
     const t2 = setTimeout(() => setPulse(true), 800)
-    return () => { clearTimeout(t1); clearTimeout(t2) }
+    const t3 = setTimeout(() => setBeat(true), 1200)
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
   }, [])
 
   return (
@@ -32,7 +34,7 @@ export default function Landing() {
 
         {/* Animated heart rings */}
         <div className="relative flex items-center justify-center mb-12" style={{ width: 120, height: 120 }}>
-          {/* Outer ring */}
+          {/* Outer ring — heartbeat */}
           <div
             className="absolute rounded-full border border-rose-600/10"
             style={{
@@ -40,9 +42,10 @@ export default function Landing() {
               transform: pulse ? 'scale(1)' : 'scale(0.6)',
               opacity: pulse ? 1 : 0,
               transition: 'transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 1.2s ease',
+              animation: beat ? 'heartbeat-outer 1.4s ease-in-out infinite' : 'none',
             }}
           />
-          {/* Mid ring */}
+          {/* Mid ring — heartbeat */}
           <div
             className="absolute rounded-full border border-rose-600/20"
             style={{
@@ -50,9 +53,10 @@ export default function Landing() {
               transform: pulse ? 'scale(1)' : 'scale(0.5)',
               opacity: pulse ? 1 : 0,
               transition: 'transform 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s, opacity 1s ease 0.1s',
+              animation: beat ? 'heartbeat-mid 1.4s ease-in-out infinite' : 'none',
             }}
           />
-          {/* Inner circle */}
+          {/* Inner circle — heartbeat */}
           <div
             className="absolute rounded-full flex items-center justify-center"
             style={{
@@ -62,6 +66,7 @@ export default function Landing() {
               transform: pulse ? 'scale(1)' : 'scale(0.3)',
               opacity: pulse ? 1 : 0,
               transition: 'transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s, opacity 0.8s ease 0.2s',
+              animation: beat ? 'heartbeat-inner 1.4s ease-in-out infinite' : 'none',
             }}
           >
             <HeartIcon />
@@ -132,7 +137,7 @@ export default function Landing() {
           onClick={() => navigate('/guest')}
           className="w-full py-3 text-[#444] text-sm active:scale-95 transition-transform"
         >
-          Play as Guest
+          Continue as Guest
         </button>
       </div>
 
