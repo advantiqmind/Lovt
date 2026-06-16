@@ -4,14 +4,13 @@ import Landing from './pages/Landing'
 import Auth from './pages/Auth'
 import Pair from './pages/Pair'
 import Home from './pages/Home'
+import Guest from './pages/Guest'
+import ThisOrThat from './pages/games/ThisOrThat'
 
 function Spinner() {
   return (
-    <div className="min-h-dvh flex items-center justify-center bg-[#0d0d0d]">
-      <div
-        className="w-2 h-2 rounded-full animate-ping"
-        style={{ backgroundColor: '#e11d48' }}
-      />
+    <div className="min-h-dvh flex items-center justify-center bg-[#0a0a0a]">
+      <div className="w-2 h-2 rounded-full animate-ping" style={{ backgroundColor: '#e11d48' }} />
     </div>
   )
 }
@@ -26,22 +25,12 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/"
-          element={!user ? <Landing /> : paired ? <Navigate to="/home" /> : <Navigate to="/pair" />}
-        />
-        <Route
-          path="/auth"
-          element={!user ? <Auth /> : paired ? <Navigate to="/home" /> : <Navigate to="/pair" />}
-        />
-        <Route
-          path="/pair"
-          element={!user ? <Navigate to="/" /> : paired ? <Navigate to="/home" /> : <Pair />}
-        />
-        <Route
-          path="/home"
-          element={!user ? <Navigate to="/" /> : !paired ? <Navigate to="/pair" /> : <Home />}
-        />
+        <Route path="/" element={!user ? <Landing /> : paired ? <Navigate to="/home" /> : <Navigate to="/pair" />} />
+        <Route path="/auth" element={!user ? <Auth /> : paired ? <Navigate to="/home" /> : <Navigate to="/pair" />} />
+        <Route path="/pair" element={!user ? <Navigate to="/" /> : paired ? <Navigate to="/home" /> : <Pair />} />
+        <Route path="/home" element={!user ? <Navigate to="/" /> : !paired ? <Navigate to="/pair" /> : <Home />} />
+        <Route path="/guest" element={<Guest />} />
+        <Route path="/game/this-or-that" element={<ThisOrThat />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
