@@ -2,9 +2,10 @@ import { useNavigate } from 'react-router-dom'
 
 const games = [
   { id: 'this-or-that', label: 'This or That', desc: 'Rapid fire choices', accent: '#e11d48', soon: false },
-  { id: 'hangman', label: 'Hangman', desc: 'Guess the word', accent: '#7c3aed', soon: true },
+  { id: 'hangman', label: 'Hangman', desc: 'Guess the word', accent: '#7c3aed', soon: false },
+  { id: 'word-chain', label: 'Word Chain', desc: 'Connect the words', accent: '#f59e0b', soon: false },
+  { id: 'countdown', label: 'Countdown', desc: 'Next big moment', accent: '#f97316', soon: false },
   { id: 'draw', label: 'Draw Together', desc: 'Shared canvas', accent: '#0ea5e9', soon: true },
-  { id: 'word-chain', label: 'Word Chain', desc: 'Connect the words', accent: '#f59e0b', soon: true },
 ]
 
 export default function Guest() {
