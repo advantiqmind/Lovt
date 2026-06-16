@@ -71,8 +71,11 @@ export default function ThisOrThat() {
           background: 'rgba(225,29,72,0.12)',
           border: '1px solid rgba(225,29,72,0.3)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 32,
-        }}>⚡</div>
+        }}>
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <path d="M16 4L8 16h8l-4 8 12-14h-8l4-6z" stroke="#e11d48" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
         <div>
           <h2 style={{ fontSize: 32, fontWeight: 800, color: '#fff', letterSpacing: '-0.04em' }}>Done!</h2>
           <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 14, marginTop: 8 }}>{total} rounds played</p>

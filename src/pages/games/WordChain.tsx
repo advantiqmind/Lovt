@@ -104,9 +104,9 @@ export default function WordChain() {
         ref={listRef}
         style={{
           position: 'relative', zIndex: 10,
-          flex: 1, overflowY: 'auto', marginBottom: 16,
+          overflowY: 'auto', marginBottom: 16,
           display: 'flex', flexDirection: 'column', gap: 6,
-          maxHeight: '40vh',
+          maxHeight: '45vh',
           padding: '4px 0',
         }}
       >
@@ -122,19 +122,15 @@ export default function WordChain() {
               border: `1px solid ${i === 0 ? 'rgba(255,255,255,0.08)' : isYou ? accentColor + '30' : 'rgba(255,255,255,0.1)'}`,
               borderRadius: 12,
               padding: '8px 16px',
-              display: 'flex', alignItems: 'center', gap: 8,
             }}>
-              {i > 0 && (
-                <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 11 }}>{i}</span>
-              )}
               <span style={{
                 color: isLast ? '#fff' : 'rgba(255,255,255,0.6)',
                 fontWeight: isLast ? 800 : 600,
                 fontSize: isLast ? 18 : 15,
                 letterSpacing: '0.05em',
               }}>
-                <span style={{ color: isLast ? accentColor : 'rgba(255,255,255,0.3)' }}>{word[0]}</span>
-                {word.slice(1)}
+                {word.slice(0, -1)}
+                <span style={{ color: accentColor }}>{word[word.length - 1]}</span>
               </span>
             </div>
           )
