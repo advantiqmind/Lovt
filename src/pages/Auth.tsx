@@ -37,36 +37,53 @@ export default function Auth() {
 
   if (checkEmail) {
     return (
-      <div className="min-h-dvh bg-[#0d0d0d] flex flex-col items-center justify-center px-6 text-center space-y-4">
-        <span className="text-5xl">✉</span>
-        <h2 className="text-2xl font-light text-white">check your email</h2>
-        <p className="text-[#888] text-sm leading-relaxed">
-          we sent a confirmation link to<br />
-          <span className="text-white">{email}</span>
-        </p>
-        <p className="text-[#555] text-xs pt-4">
-          tip: disable email confirmation in Supabase Auth settings to skip this step
-        </p>
+      <div className="min-h-dvh bg-[#0a0a0a] flex flex-col items-center justify-center px-6 text-center space-y-5">
+        <div style={{
+          width: 64, height: 64, borderRadius: '50%',
+          background: 'rgba(225,29,72,0.12)',
+          border: '1px solid rgba(225,29,72,0.3)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 28,
+        }}>✉</div>
+        <div>
+          <h2 style={{ fontSize: 28, fontWeight: 700, color: '#fff', letterSpacing: '-0.03em' }}>Check your email</h2>
+          <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 14, marginTop: 8, lineHeight: 1.6 }}>
+            We sent a link to<br />
+            <span style={{ color: 'rgba(255,255,255,0.7)' }}>{email}</span>
+          </p>
+        </div>
+        <button
+          onClick={() => navigate('/')}
+          style={{ color: 'rgba(255,255,255,0.2)', fontSize: 13, marginTop: 16 }}
+        >
+          ← Back
+        </button>
       </div>
     )
   }
 
   return (
-    <div className="min-h-dvh bg-[#0d0d0d] flex flex-col px-6 py-16">
+    <div className="min-h-dvh bg-[#0a0a0a] flex flex-col px-6 py-16 overflow-hidden">
+
+      {/* Background glow */}
+      <div className="pointer-events-none fixed inset-0 z-0" style={{
+        background: 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(225,29,72,0.07) 0%, transparent 70%)',
+      }} />
+
       <button
         onClick={() => navigate('/')}
-        className="text-[#555] text-sm mb-12 text-left"
+        style={{ color: 'rgba(255,255,255,0.25)', fontSize: 13, textAlign: 'left', position: 'relative', zIndex: 10 }}
       >
-        ← back
+        ← Back
       </button>
 
-      <div className="flex-1 flex flex-col justify-center space-y-8">
+      <div className="flex-1 flex flex-col justify-center space-y-8 relative z-10">
         <div>
-          <h2 className="text-3xl font-light text-white">
-            {isSignup ? 'create account' : 'welcome back'}
+          <h2 style={{ fontSize: 36, fontWeight: 800, color: '#fff', letterSpacing: '-0.04em', lineHeight: 1.1 }}>
+            {isSignup ? 'Create account' : 'Welcome back'}
           </h2>
-          <p className="text-[#555] mt-2 text-sm">
-            {isSignup ? 'start your shared space' : 'your space is waiting'}
+          <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: 14, marginTop: 8 }}>
+            {isSignup ? 'Start your shared space' : 'Your space is waiting'}
           </p>
         </div>
 
@@ -74,50 +91,74 @@ export default function Auth() {
           {isSignup && (
             <input
               type="text"
-              placeholder="your name"
+              placeholder="Your name"
               value={name}
               onChange={e => setName(e.target.value)}
               required
-              className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-2xl px-4 py-4 text-white placeholder-[#444] outline-none text-base focus:border-rose-600/40 transition-colors"
+              style={inputStyle}
             />
           )}
           <input
             type="email"
-            placeholder="email"
+            placeholder="Email"
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
-            className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-2xl px-4 py-4 text-white placeholder-[#444] outline-none text-base focus:border-rose-600/40 transition-colors"
+            style={inputStyle}
           />
           <input
             type="password"
-            placeholder="password"
+            placeholder="Password"
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
             minLength={6}
-            className="w-full bg-[#1a1a1a] border border-[#2a2a2a] rounded-2xl px-4 py-4 text-white placeholder-[#444] outline-none text-base focus:border-rose-600/40 transition-colors"
+            style={inputStyle}
           />
 
-          {error && <p className="text-rose-400 text-sm px-1">{error}</p>}
+          {error && (
+            <p style={{ color: '#ff4d6d', fontSize: 13, paddingLeft: 4 }}>{error}</p>
+          )}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-4 rounded-2xl font-medium text-base text-white active:scale-95 transition-transform disabled:opacity-40 mt-2"
-            style={{ backgroundColor: '#e11d48' }}
+            className="w-full active:scale-95 transition-transform"
+            style={{
+              padding: '16px',
+              borderRadius: 16,
+              background: loading ? 'rgba(225,29,72,0.4)' : 'linear-gradient(135deg, #e11d48 0%, #be123c 100%)',
+              boxShadow: loading ? 'none' : '0 4px 24px rgba(225,29,72,0.35)',
+              color: '#fff',
+              fontWeight: 600,
+              fontSize: 16,
+              marginTop: 4,
+              border: 'none',
+              cursor: loading ? 'not-allowed' : 'pointer',
+            }}
           >
-            {loading ? '...' : isSignup ? 'create account' : 'sign in'}
+            {loading ? '...' : isSignup ? 'Create Account' : 'Sign In'}
           </button>
         </form>
 
         <button
           onClick={() => navigate(`/auth?mode=${isSignup ? 'login' : 'signup'}`)}
-          className="text-center text-[#555] text-sm"
+          style={{ color: 'rgba(255,255,255,0.2)', fontSize: 13, textAlign: 'center' }}
         >
-          {isSignup ? 'already have an account? sign in' : "don't have an account? sign up"}
+          {isSignup ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
         </button>
       </div>
     </div>
   )
+}
+
+const inputStyle: React.CSSProperties = {
+  width: '100%',
+  background: 'rgba(255,255,255,0.04)',
+  border: '1px solid rgba(255,255,255,0.08)',
+  borderRadius: 16,
+  padding: '16px',
+  color: '#fff',
+  fontSize: 16,
+  outline: 'none',
 }
