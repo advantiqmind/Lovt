@@ -1,26 +1,53 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const STARTER_WORDS = [
-  'LOVE', 'ROSE', 'KISS', 'DATE', 'STAR', 'MOON', 'DREAM', 'HEART',
-  'SWEET', 'DANCE', 'SMILE', 'FLAME', 'SPARK', 'LIGHT', 'TENDER',
-]
+const WORD_POOL: Record<string, string[]> = {
+  A: ['ADVENTURE', 'ANCHOR', 'AMBER', 'ANGEL', 'ARROW', 'ATLAS', 'AUTUMN', 'AZURE'],
+  B: ['BRAVE', 'BREEZE', 'BRIGHT', 'BLOOM', 'BLISS', 'BRIDGE', 'BRONZE', 'BUTTER'],
+  C: ['CANDLE', 'CASTLE', 'CHARM', 'CHERRY', 'CLOUD', 'CORAL', 'COZY', 'CRYSTAL'],
+  D: ['DANCE', 'DAYDREAM', 'DAZZLE', 'DELIGHT', 'DREAM', 'DRIFT', 'DUSK', 'DUNE'],
+  E: ['EMBER', 'EMBRACE', 'ETERNAL', 'ECHO', 'ECLIPSE', 'ENERGY', 'ESCAPE', 'EDEN'],
+  F: ['FLAME', 'FOREST', 'FOREVER', 'FRESH', 'FROST', 'FLUTTER', 'FAITH', 'FLAIR'],
+  G: ['GARDEN', 'GENTLE', 'GLOW', 'GOLD', 'GRACE', 'GRAND', 'GRAVEL', 'GROVE'],
+  H: ['HARBOR', 'HEART', 'HEAVEN', 'HONEY', 'HORIZON', 'HOPE', 'HAZE', 'HAVEN'],
+  I: ['ISLAND', 'IVORY', 'IMAGINE', 'INSPIRE', 'IRIS', 'ICICLE', 'INK', 'INDIGO'],
+  J: ['JADE', 'JEWEL', 'JOURNEY', 'JOY', 'JUNGLE', 'JASMINE', 'JETTY', 'JAZZ'],
+  K: ['KINDNESS', 'KISS', 'KITE', 'KNOT', 'KARMA', 'KINDLE', 'KEEN', 'KELP'],
+  L: ['LANTERN', 'LAUGHTER', 'LAVENDER', 'LIGHT', 'LOVE', 'LUNAR', 'LACE', 'LUSH'],
+  M: ['MAGIC', 'MARBLE', 'MEADOW', 'MELODY', 'MIST', 'MOON', 'MORNING', 'MYSTIC'],
+  N: ['NATURE', 'NESTLE', 'NIGHT', 'NOBLE', 'NORTH', 'NOVA', 'NEON', 'NECTAR'],
+  O: ['OCEAN', 'OPAL', 'ORACLE', 'ORBIT', 'ORCHID', 'ORIGIN', 'ONYX', 'OLIVE'],
+  P: ['PETAL', 'PEACE', 'PEARL', 'PHOENIX', 'PINE', 'PRISM', 'PURE', 'PILGRIM'],
+  Q: ['QUIET', 'QUEST', 'QUARTZ', 'QUEEN', 'QUILL', 'QUIRK', 'QUIVER', 'QUASAR'],
+  R: ['RADIANT', 'RAIN', 'RAINBOW', 'RIVER', 'ROSE', 'RUBY', 'RUSH', 'REALM'],
+  S: ['SACRED', 'SAPPHIRE', 'SERENE', 'SILVER', 'SOLAR', 'SOUL', 'SPARK', 'STAR'],
+  T: ['TENDER', 'THUNDER', 'TIDE', 'TIMBER', 'TOPAZ', 'TRAIL', 'TRUTH', 'TWILIGHT'],
+  U: ['ULTRA', 'UMBRELLA', 'UNITY', 'UNIVERSE', 'UNIQUE', 'UPLIFT', 'UMBER', 'URBAN'],
+  V: ['VALLEY', 'VELVET', 'VESSEL', 'VIBRANT', 'VIOLET', 'VISION', 'VIVID', 'VOYAGE'],
+  W: ['WARM', 'WAVE', 'WILD', 'WILLOW', 'WIND', 'WINTER', 'WISDOM', 'WONDER'],
+  X: ['XENON', 'XRAY', 'XEROX'],
+  Y: ['YARN', 'YELLOW', 'YOGA', 'YOUNG', 'YOUTH', 'YONDER', 'YIELD', 'YELL'],
+  Z: ['ZENITH', 'ZEPHYR', 'ZINC', 'ZEAL', 'ZERO', 'ZIGZAG', 'ZONE', 'ZINNIA'],
+}
 
-function getStarter() {
-  return STARTER_WORDS[Math.floor(Math.random() * STARTER_WORDS.length)]
+function getSuggestion(letter: string, used: string[]): string | null {
+  const pool = (WORD_POOL[letter] ?? []).filter(w => !used.includes(w))
+  if (pool.length === 0) return null
+  return pool[Math.floor(Math.random() * pool.length)]
 }
 
 export default function WordChain() {
   const navigate = useNavigate()
-  const [chain, setChain] = useState<string[]>(() => [getStarter()])
+  const [chain, setChain] = useState<string[]>([])
   const [input, setInput] = useState('')
   const [error, setError] = useState('')
   const [turn, setTurn] = useState<'you' | 'partner'>('you')
   const inputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
 
+  const started = chain.length > 0
   const lastWord = chain[chain.length - 1]
-  const requiredLetter = lastWord[lastWord.length - 1]
+  const requiredLetter = started ? lastWord[lastWord.length - 1] : null
 
   useEffect(() => {
     if (listRef.current) {
@@ -36,7 +63,7 @@ export default function WordChain() {
       setError('Must be at least 2 letters')
       return
     }
-    if (word[0] !== requiredLetter) {
+    if (requiredLetter && word[0] !== requiredLetter) {
       setError(`Must start with ${requiredLetter}`)
       return
     }
@@ -48,18 +75,28 @@ export default function WordChain() {
     setChain(prev => [...prev, word])
     setInput('')
     setError('')
-    setTurn(t => t === 'you' ? 'partner' : 'you')
+    if (started) setTurn(t => t === 'you' ? 'partner' : 'you')
     inputRef.current?.focus()
   }
 
+  function suggest() {
+    const letter = requiredLetter ?? 'L'
+    const word = getSuggestion(letter, chain)
+    if (word) {
+      setInput(word)
+      setError('')
+      inputRef.current?.focus()
+    }
+  }
+
   function reset() {
-    setChain([getStarter()])
+    setChain([])
     setInput('')
     setError('')
     setTurn('you')
   }
 
-  const accentColor = '#f59e0b'
+  const accent = '#f59e0b'
 
   return (
     <div style={{ minHeight: '100dvh', background: '#080808', display: 'flex', flexDirection: 'column', padding: '0 20px' }}>
@@ -72,31 +109,37 @@ export default function WordChain() {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 52, paddingBottom: 16, position: 'relative', zIndex: 10 }}>
         <button onClick={() => navigate(-1)} style={{ color: 'rgba(255,255,255,0.25)', fontSize: 13 }}>← Back</button>
         <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 700 }}>Word Chain</span>
-        <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 12, fontWeight: 600 }}>{chain.length - 1} links</span>
+        <span style={{ color: 'rgba(255,255,255,0.25)', fontSize: 12, fontWeight: 600 }}>{chain.length} words</span>
       </div>
 
       {/* Turn indicator */}
-      <div style={{ position: 'relative', zIndex: 10, display: 'flex', gap: 8, marginBottom: 16 }}>
-        {(['you', 'partner'] as const).map(t => (
-          <div key={t} style={{
-            flex: 1, padding: '10px', borderRadius: 12, textAlign: 'center',
-            background: turn === t ? `${accentColor}18` : 'rgba(255,255,255,0.02)',
-            border: `1px solid ${turn === t ? accentColor + '40' : 'rgba(255,255,255,0.05)'}`,
-            transition: 'all 0.3s',
-          }}>
-            <p style={{ color: turn === t ? accentColor : 'rgba(255,255,255,0.2)', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-              {t === 'you' ? 'You' : 'Partner'}
-            </p>
-          </div>
-        ))}
-      </div>
+      {started && (
+        <div style={{ position: 'relative', zIndex: 10, display: 'flex', gap: 8, marginBottom: 16 }}>
+          {(['you', 'partner'] as const).map(t => (
+            <div key={t} style={{
+              flex: 1, padding: '10px', borderRadius: 12, textAlign: 'center',
+              background: turn === t ? `${accent}18` : 'rgba(255,255,255,0.02)',
+              border: `1px solid ${turn === t ? accent + '40' : 'rgba(255,255,255,0.05)'}`,
+              transition: 'all 0.3s',
+            }}>
+              <p style={{ color: turn === t ? accent : 'rgba(255,255,255,0.2)', fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                {t === 'you' ? 'You' : 'Partner'}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
 
-      {/* Required letter prompt */}
+      {/* Prompt */}
       <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', marginBottom: 12 }}>
-        <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 13 }}>
-          Next word must start with{' '}
-          <span style={{ color: accentColor, fontWeight: 800, fontSize: 20 }}>{requiredLetter}</span>
-        </p>
+        {!started ? (
+          <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 14 }}>Start the chain — type any word</p>
+        ) : (
+          <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: 13 }}>
+            Next word must start with{' '}
+            <span style={{ color: accent, fontWeight: 800, fontSize: 20 }}>{requiredLetter}</span>
+          </p>
+        )}
       </div>
 
       {/* Chain display */}
@@ -106,38 +149,36 @@ export default function WordChain() {
           position: 'relative', zIndex: 10,
           overflowY: 'auto', marginBottom: 16,
           display: 'flex', flexDirection: 'column', gap: 6,
-          maxHeight: '45vh',
+          maxHeight: '42vh',
           padding: '4px 0',
         }}
       >
         {chain.map((word, i) => {
           const isLast = i === chain.length - 1
-          const isYou = i % 2 === 1
+          const isYou = i % 2 === 0
           return (
             <div key={i} style={{
-              alignSelf: i === 0 ? 'center' : isYou ? 'flex-end' : 'flex-start',
-              background: i === 0
-                ? 'rgba(255,255,255,0.04)'
-                : isYou ? `${accentColor}18` : 'rgba(255,255,255,0.06)',
-              border: `1px solid ${i === 0 ? 'rgba(255,255,255,0.08)' : isYou ? accentColor + '30' : 'rgba(255,255,255,0.1)'}`,
+              alignSelf: isYou ? 'flex-start' : 'flex-end',
+              background: isYou ? 'rgba(255,255,255,0.05)' : `${accent}18`,
+              border: `1px solid ${isYou ? 'rgba(255,255,255,0.08)' : accent + '30'}`,
               borderRadius: 12,
               padding: '8px 16px',
             }}>
               <span style={{
-                color: isLast ? '#fff' : 'rgba(255,255,255,0.6)',
+                color: isLast ? '#fff' : 'rgba(255,255,255,0.55)',
                 fontWeight: isLast ? 800 : 600,
                 fontSize: isLast ? 18 : 15,
                 letterSpacing: '0.05em',
               }}>
                 {word.slice(0, -1)}
-                <span style={{ color: accentColor }}>{word[word.length - 1]}</span>
+                <span style={{ color: accent }}>{word[word.length - 1]}</span>
               </span>
             </div>
           )
         })}
       </div>
 
-      {/* Input form */}
+      {/* Input */}
       <div style={{ position: 'relative', zIndex: 10, marginBottom: 24 }}>
         <form onSubmit={submit}>
           <div style={{ position: 'relative' }}>
@@ -145,7 +186,7 @@ export default function WordChain() {
               ref={inputRef}
               value={input}
               onChange={e => { setInput(e.target.value); setError('') }}
-              placeholder={`Start with ${requiredLetter}...`}
+              placeholder={requiredLetter ? `Start with ${requiredLetter}...` : 'Type any word...'}
               autoComplete="off"
               autoCapitalize="characters"
               style={{
@@ -162,7 +203,7 @@ export default function WordChain() {
               style={{
                 position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)',
                 width: 40, height: 40, borderRadius: 12,
-                background: `linear-gradient(135deg, ${accentColor}, #d97706)`,
+                background: `linear-gradient(135deg, ${accent}, #d97706)`,
                 border: 'none', cursor: 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}
@@ -178,8 +219,22 @@ export default function WordChain() {
         </form>
 
         <button
+          onClick={suggest}
+          style={{
+            width: '100%', padding: '13px', marginTop: 8,
+            borderRadius: 12,
+            background: `${accent}10`,
+            border: `1px solid ${accent}25`,
+            color: accent, fontSize: 13, fontWeight: 600,
+          }}
+          className="active:scale-95 transition-transform"
+        >
+          Suggest a word
+        </button>
+
+        <button
           onClick={reset}
-          style={{ width: '100%', padding: '12px', marginTop: 12, color: 'rgba(255,255,255,0.18)', fontSize: 13, borderRadius: 12, border: '1px solid rgba(255,255,255,0.05)', background: 'transparent' }}
+          style={{ width: '100%', padding: '11px', marginTop: 6, color: 'rgba(255,255,255,0.18)', fontSize: 12, borderRadius: 12, border: '1px solid rgba(255,255,255,0.05)', background: 'transparent' }}
         >
           New Game
         </button>
